@@ -7,6 +7,138 @@ body {
   -moz-osx-font-smoothing: grayscale;
 }
 
+/* home */
+.navbar {
+  background-color: #22668a;
+  /* position: fixed;
+  width: 100%;
+  z-index: 1000; */
+}
+
+.tags {
+  margin-top: 20px;
+  margin-left: 110px;
+  margin-right: 110px;
+}
+
+.tag-atas {
+  margin-left: 100px;
+  margin-right: 100px;
+  margin-top: 20px;
+}
+
+.button-tags {
+  margin-left: 10px;
+  background-color: #22668a;
+  color: white;
+  border-radius: 10px;
+  border: none;
+}
+
+.tag-item {
+  background-color: #22668a;
+  color: white;
+  border-radius: 10px;
+  border: none;
+}
+
+.card-container {
+  /* position: relative; */
+  display: flex;
+  flex-wrap: wrap;
+  margin-left: 50px;
+  margin-right: 50px;
+}
+
+.card {
+  margin-left: 10px;
+  margin-right: 10px;
+}
+
+/* cart */
+.notif-cart {
+  padding: 0 5px;
+  margin-top: 10px;
+  background-color: red;
+  color: white;
+  font-weight: 500;
+  border-radius: 50px;
+  font-size: 13px;
+  position: relative;
+  top: -8px;
+}
+
+/* pagination */
+.pagination {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.page {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+/* login */
+.box-login {
+  display: block;
+  justify-content: center;
+  align-items: center;
+  width: 30%;
+  height: 25%;
+  background-color: red;
+}
+
+.container-login {
+  display: block;
+  justify-content: center;
+  align-items: center;
+}
+
+.container {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.box-login {
+  width: 80%;
+  height: 700px;
+  background-color: white;
+  border-radius: 15px;
+  box-shadow: rgba(0, 0, 0, 0.10) 0px 5px 15px;
+}
+
+.container-login {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.email-login {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.form-login {
+  width: 70%;
+}
+
+/* tambah alamat */
+.form-alamat {
+  width: 20%;
+  border-radius: 5px;
+  border: 1px solid black;
+  padding-left: 5px;
+}
+
+
+
 code {
   font-family: source-code-pro, Menlo, Monaco, Consolas, 'Courier New',
     monospace;
