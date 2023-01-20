@@ -29,6 +29,7 @@ const Profile = () => {
       navigate("/Confirmasi")
   }
 
+  const [payload, setPayload] = useState([])
   const [cart, setCart] = useState([])
   const [profile, setProfile] = useState({
     full_name: "",
@@ -37,7 +38,26 @@ const Profile = () => {
 
   useEffect(() => {
     fetchProfile()
+    submitAddress()
   }, [])
+
+  const submitAddress = () => {
+    const token = localStorage.getItem("token");
+    fetch(`http://localhost:8000/api/delivery-addresses`, {
+      method: "GET",
+        // body: JSON.stringify(payload),
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      setPayload(data.data)
+      console.log(data);
+    })
+  }
 
   const fetchProfile = (formData) => {
     fetch(`http://localhost:8000/auth/me`,
@@ -92,16 +112,18 @@ const Profile = () => {
         <Card.Header style={{width: "100%", background: "#DC0000", color: "white"}}><strong>Check Out</strong></Card.Header>
         <ListGroup style={{width: "100%"}} variant="flush">
         <ListGroup.Item><strong>Pilih Alamat Pengiriman</strong></ListGroup.Item>
-            <Row>
+        {payload.map((item, index) => (
+            <Row key={index}>
                 <Col>
-                    <ListGroup.Item><strong>Nama</strong></ListGroup.Item>
-                    <ListGroup.Item><input type="checkbox"/>Mataram</ListGroup.Item>
+                    <ListGroup.Item><strong>Kota</strong></ListGroup.Item>
+                    <ListGroup.Item><input type="checkbox"/>{item.kabupaten}</ListGroup.Item>
                 </Col>
                 <Col>
                     <ListGroup.Item><strong>Detail</strong></ListGroup.Item>
-                    <ListGroup.Item>JLN DR SOETOMO GG 4 MATARAM</ListGroup.Item>
+                    <ListGroup.Item>{item.detail}</ListGroup.Item>
                 </Col>
             </Row>
+        ))}
         </ListGroup>
         <Button
         onClick={() => goToConfirmasi()}

@@ -15,6 +15,7 @@ import NavbarComponent from "../component/NavbarComponent";
 import Card from 'react-bootstrap/Card';
 import Nav from 'react-bootstrap/Nav';
 import { Col, ListGroup, Row } from "react-bootstrap";
+import { numberWithCommas } from "../component/Utils";
 import {  decrementWitchCheckingAction, increment } from "../App/features/Counter/actions"
 
 const Profile = () => {
@@ -22,14 +23,15 @@ const Profile = () => {
   const goToProfile = () => {
     navigate("/Profile")
   }
-  const goToInvoices = () => {
-      navigate("/Invoices")
-  }
+  
   const goToCheckout = () => {
       navigate("/Checkout")
   }
 
-  const [cart, setCart] = useState([])
+  var totalCartPrice = 0;
+  const cart = useSelector((state) => state.cart);
+  const [payload, setPayload] = useState([])
+  // const [cart, setCart] = useState([])
   const [profile, setProfile] = useState({
     full_name: "",
     email: ""
@@ -37,6 +39,7 @@ const Profile = () => {
 
   useEffect(() => {
     fetchProfile()
+    submitAddress()
   }, [])
 
   const fetchProfile = (formData) => {
@@ -54,18 +57,63 @@ const Profile = () => {
     })
   }
 
-  const fetchCart = () => {
-    fetch(`http://localhost:8000/api/carts`, {
+  const goToInvoices = () => {
+    const token = localStorage.getItem("token");
+    fetch(`http://localhost:8000/api/orders`, {
+      method: "POST", 
+      body: JSON.stringify({
+        delivery_fee: 10000,
+        delivery_address: payload[0]
+      }),
+
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      if (data._id) {
+        navigate("/Invoices", {state: {id: data._id}})
+      }
+    })
+  }
+
+  const submitAddress = () => {
+    const token = localStorage.getItem("token");
+    fetch(`http://localhost:8000/api/delivery-addresses`, {
+      method: "GET",
+        // body: JSON.stringify(payload),
         headers: {
-            "Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzkyZmYyZGQ3NWY1ZDc1NmU3MjFiZmYiLCJmdWxsX25hbWUiOiJLYWRlayBTdWNpcHRhIiwiZW1haWwiOiJrYWRla0BnbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJjdXN0b21lcl9pZCI6OSwiaWF0IjoxNjcwNTc3OTkwfQ.xkwYFydTTYD7T3aFQV5CqZfmrEc5SSKf7DWImi9nEEE`
-        }
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
     })
-    .then(res => res.json())
-    .then(data => {
-        setCart(data)
-        console.log(data)
+    .then((res) => res.json())
+    .then((data) => {
+      setPayload(data.data)
+      console.log(data);
     })
-    };
+  }
+
+  // const fetchCart = () => {
+  //   fetch(`http://localhost:8000/api/carts`, {
+  //       headers: {
+  //           "Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzkyZmYyZGQ3NWY1ZDc1NmU3MjFiZmYiLCJmdWxsX25hbWUiOiJLYWRlayBTdWNpcHRhIiwiZW1haWwiOiJrYWRla0BnbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJjdXN0b21lcl9pZCI6OSwiaWF0IjoxNjcwNTc3OTkwfQ.xkwYFydTTYD7T3aFQV5CqZfmrEc5SSKf7DWImi9nEEE`
+  //       }
+  //   })
+  //   .then(res => res.json())
+  //   .then(data => {
+  //       setCart(data)
+  //       console.log(data)
+  //   })
+  //   };
+
+    {cart.map((item, index) => (
+      totalCartPrice += item.price * item.qty
+    ))}
 
     let {count}= useSelector(state => state.counter)
     const dispatch = useDispatch()
@@ -91,7 +139,8 @@ const Profile = () => {
             }}>
         <Card.Header style={{width: "100%", background: "#DC0000", color: "white"}}><strong>Confirm</strong></Card.Header>
         <ListGroup style={{width: "100%"}} variant="flush">
-            <Row>
+        {payload.map((item, index) => (
+            <Row key={index}>
                 <Col>
                     <ListGroup.Item><strong>Alamat</strong></ListGroup.Item>
                     <ListGroup.Item><strong>Sub Total</strong></ListGroup.Item>
@@ -99,31 +148,39 @@ const Profile = () => {
                     <ListGroup.Item><strong>Total</strong></ListGroup.Item>
                 </Col>
                 <Col>
-                    <ListGroup.Item>JLN DR SOETOMO GG 4 MATARAM</ListGroup.Item>
-                    <ListGroup.Item>Rp.110.000</ListGroup.Item>
-                    <ListGroup.Item>Rp.10.000</ListGroup.Item>
-                    <ListGroup.Item><strong>Rp.120.000</strong></ListGroup.Item>
+                    <ListGroup.Item>{item.detail}</ListGroup.Item>
+                    <ListGroup.Item>Rp.{numberWithCommas(totalCartPrice)}.00</ListGroup.Item>
+                    <ListGroup.Item>Rp.5.000.00</ListGroup.Item>
+                    <ListGroup.Item><strong>Rp.{numberWithCommas(totalCartPrice+5000)}.00</strong></ListGroup.Item>
                 </Col>
             </Row>
-        </ListGroup>
-        <div style={{display: "flex"}}>
-        <Button
-        onClick={() => goToCheckout()}
-        style={{
-            width: "99%",
-            marginBottom: "5px",
-            marginTop: "5px",
-            float: "left",
-        }}>Kembali</Button>
+            ))}
+            <div style={{justifyContent: "center", alignItems: "center"}}>
+            <div style={{float: "left"}}>
+            <Button
+            onClick={() => goToCheckout()}
+            style={{
+                width: "100%",
+                marginBottom: "5px",
+                marginTop: "5px",
+                marginLeft: "5px"
+            }}>Kembali</Button>
+            </div>
 
-        <Button
-        onClick={() => goToInvoices()}
-        style={{
-            width: "99%",
-            marginBottom: "5px",
-            marginTop: "5px"
-        }}>Bayar</Button>
-        </div>
+            <div style={{display: "flex", justifyContent: "center", alignItems: "center", float: "right"}}>
+            <Button
+            onClick={() => goToInvoices()}
+            style={{
+                width: "100%",
+                marginBottom: "5px",
+                marginTop: "5px",
+                marginRight: "5px",
+                paddingLeft: "10px"
+            }}>Bayar</Button>
+            </div>
+            </div>
+        </ListGroup>
+
         </Card>
         </div>
         

@@ -9,7 +9,7 @@ import { faLocationArrow } from "@fortawesome/free-solid-svg-icons";
 import { faSignOut } from "@fortawesome/free-solid-svg-icons";
 import Dropdown from "react-bootstrap/Dropdown";
 import Button from "react-bootstrap/Button";
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import NavbarComponent from "../component/NavbarComponent";
 import Card from "react-bootstrap/Card";
@@ -19,6 +19,7 @@ import {
   decrementWitchCheckingAction,
   increment,
 } from "../App/features/Counter/actions";
+import { numberWithCommas } from "../component/Utils";
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -32,6 +33,8 @@ const Profile = () => {
     navigate("/Checkout");
   };
 
+  const {state} = useLocation()
+  const [invoice, setIvoice] = useState({})
   const [cart, setCart] = useState([]);
   const [profile, setProfile] = useState({
     full_name: "",
@@ -40,6 +43,7 @@ const Profile = () => {
 
   useEffect(() => {
     fetchProfile();
+    getInvoices();
   }, []);
 
   const fetchProfile = (formData) => {
@@ -69,6 +73,26 @@ const Profile = () => {
         console.log(data);
       });
   };
+
+  const getInvoices = () => {
+    const token = localStorage.getItem("token");
+    fetch(`http://localhost:8000/api/invoices/${state?.id}`, {
+      method: "GET", 
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      setIvoice(data)
+      console.log("get invoice: ", data);
+      // if (data._id) {
+      //   navigate("/Invoices", {state: {id: data._id}})
+      // }
+    })
+  }
 
   let { count } = useSelector((state) => state.counter);
   const dispatch = useDispatch();
@@ -120,14 +144,14 @@ const Profile = () => {
                 </ListGroup.Item>
               </Col>
               <Col>
-                <ListGroup.Item>waiting_payment</ListGroup.Item>
-                <ListGroup.Item>#09</ListGroup.Item>
-                <ListGroup.Item>Rp.120.000</ListGroup.Item>
+                <ListGroup.Item>{invoice?.order?.status}</ListGroup.Item>
+                <ListGroup.Item>#{invoice?.user.customer_id}</ListGroup.Item>
+                <ListGroup.Item>Rp.{(invoice?.total)}.00</ListGroup.Item>
                 <ListGroup.Item>
-                  <strong>KADEK SUCIPTA</strong>
+                  <strong>{invoice?.user?.full_name}</strong>
                   <br />
-                  kadek@gmail.com <br />
-                  JLN DR SOETOMO GG 4 MATARAM
+                  {invoice?.user?.email} <br />
+                  {invoice?.order?.delivery_address.detail}
                 </ListGroup.Item>
                 <ListGroup.Item>
                   <strong>PUTRA DWI</strong>

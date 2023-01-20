@@ -14,6 +14,8 @@ import { useDispatch } from "react-redux";
 import NavbarComponent from "../../component/NavbarComponent";
 import Card from 'react-bootstrap/Card';
 import Nav from 'react-bootstrap/Nav';
+import { Modal } from "react-bootstrap";
+import foto from "./KADEK (liquif).jpg"
 
 const Profile = () => {
   const navigate = useNavigate()
@@ -30,6 +32,9 @@ const Profile = () => {
     navigate("/Logout")
   }
 
+  const [show, setShow] = useState(false);
+  const handleClose = () => setShow(false);
+  const handleShow = () => setShow(true);
   const [profile, setProfile] = useState({
     full_name: "",
     email: ""
@@ -40,11 +45,12 @@ const Profile = () => {
   }, [])
 
   const fetchProfile = (formData) => {
+    const token = localStorage.getItem("token");
     fetch(`http://localhost:8000/auth/me`,
         {
         method: "GET",
         body: formData,
-        headers: {"Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzkyZmYyZGQ3NWY1ZDc1NmU3MjFiZmYiLCJmdWxsX25hbWUiOiJLYWRlayBTdWNpcHRhIiwiZW1haWwiOiJrYWRla0BnbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJjdXN0b21lcl9pZCI6OSwiaWF0IjoxNjcwOTk0NzkyfQ.SR3QSv5msez833UDgbOdnWwIQWhtonKyBDC38Iun0Jo`}
+        headers: {Authorization : `Bearer ${token}`}
         }
     )
     .then(res => res.json())
@@ -83,7 +89,24 @@ const Profile = () => {
             <hr style={{width: "10%"}} />
             <Card.Text>Name: {profile.full_name}</Card.Text>
             <Card.Text>Email: {profile.email}</Card.Text>
-            <Button variant="primary">Go somewhere</Button>
+
+            <Button variant="primary" onClick={handleShow}>
+            Detail Profile
+          </Button>
+          <Modal show={show} onHide={handleClose}>
+            <Modal.Header closeButton>
+              <Modal.Title>Detail Profile</Modal.Title>
+            </Modal.Header>
+            <div className="d-flex">
+              <img style={{marginLeft: "20px", marginTop: "10px", marginBottom: "10px", width: "100px", borderRadius: "60px"}} src={foto} alt="" />
+              <Modal.Body><strong>Kadek Sucipta</strong><p>kadek@gmail.com</p><hr />User</Modal.Body>
+            </div>
+            <Modal.Footer>
+              <Button variant="primary" onClick={handleClose}>
+                OK
+              </Button>
+            </Modal.Footer>
+          </Modal>
           </Card.Body>
         </Card>
         

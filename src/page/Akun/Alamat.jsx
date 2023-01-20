@@ -14,6 +14,7 @@ import { useDispatch } from "react-redux";
 import NavbarComponent from "../../component/NavbarComponent";
 import Card from 'react-bootstrap/Card';
 import Nav from 'react-bootstrap/Nav';
+import { Col, ListGroup, Row } from "react-bootstrap";
 
 const Alamat = () => {
   const navigate = useNavigate()
@@ -37,23 +38,35 @@ const Alamat = () => {
     full_name: "",
     email: ""
   })
+  // const [payload, setPayload] = useState({
+  //   provinsi: "",
+  //   kabupaten: "",
+  //   kecamatan: "",
+  //   kelurahan: "",
+  //   detail: "",
+  //   nama: ""
+  // })
+  const [payload, setPayload] = useState([])
 
   useEffect(() => {
-    fetchProfile()
+    submitAddress()
   }, [])
 
-  const fetchProfile = (formData) => {
-    fetch(`http://localhost:8000/auth/me`,
-        {
-        method: "GET",
-        body: formData,
-        headers: {"Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzkyZmYyZGQ3NWY1ZDc1NmU3MjFiZmYiLCJmdWxsX25hbWUiOiJLYWRlayBTdWNpcHRhIiwiZW1haWwiOiJrYWRla0BnbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJjdXN0b21lcl9pZCI6OSwiaWF0IjoxNjcwOTk0NzkyfQ.SR3QSv5msez833UDgbOdnWwIQWhtonKyBDC38Iun0Jo`}
-        }
-    )
-    .then(res => res.json())
-    .then(data => {
-      setProfile(data)
-        console.log(data)
+  const submitAddress = () => {
+    const token = localStorage.getItem("token");
+    fetch(`http://localhost:8000/api/delivery-addresses`, {
+      method: "GET",
+        // body: JSON.stringify(payload),
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      setPayload(data.data)
+      console.log(data);
     })
   }
   
@@ -84,9 +97,37 @@ const Alamat = () => {
           <Card.Body>
             <Card.Title>Alamat</Card.Title>
             <hr style={{width: "10%"}} />
-            {/* <Card.Text>Anda Yakin Ingin Keluar ?</Card.Text>
-            <Button variant="primary">YA</Button>{" "}
-            <Button variant="primary">TIDAK</Button> */}
+            <ListGroup style={{width: "100%"}} variant="flush">
+              {payload.map((item, index) => (
+                <Row key={index}>
+                    <Col>
+                        <ListGroup.Item><strong>Nama</strong></ListGroup.Item>
+                        <ListGroup.Item>{item.nama}</ListGroup.Item>
+                    </Col>
+                    <Col>
+                        <ListGroup.Item><strong>Provinsi</strong></ListGroup.Item>
+                        <ListGroup.Item>{item.provinsi}</ListGroup.Item>
+                    </Col>
+                    <Col>
+                        <ListGroup.Item><strong>Kabupaten</strong></ListGroup.Item>
+                        <ListGroup.Item>{item.kabupaten}</ListGroup.Item>
+                    </Col>
+                    <Col>
+                        <ListGroup.Item><strong>Kecamatan</strong></ListGroup.Item>
+                        <ListGroup.Item>{item.kecamatan}</ListGroup.Item>
+                    </Col>
+                    <Col>
+                        <ListGroup.Item><strong>Kelurahan</strong></ListGroup.Item>
+                        <ListGroup.Item>{item.kelurahan}</ListGroup.Item>
+                    </Col>
+                    <Col>
+                        <ListGroup.Item><strong>Detail</strong></ListGroup.Item>
+                        <ListGroup.Item>{item.detail}</ListGroup.Item>
+                    </Col>
+                </Row>
+                ))}
+            </ListGroup>
+            <br />
             <Button onClick={() => goToTambahAlamat()} variant="primary">Tambah Alamat</Button>
           </Card.Body>
         </Card>

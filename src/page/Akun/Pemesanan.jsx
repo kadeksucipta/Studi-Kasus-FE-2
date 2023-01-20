@@ -9,11 +9,12 @@ import { faLocationArrow } from "@fortawesome/free-solid-svg-icons";
 import { faSignOut } from "@fortawesome/free-solid-svg-icons";
 import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
-import { Navigate, useNavigate } from "react-router-dom";
+import { Navigate, useLocation, useNavigate } from "react-router-dom";
 import { useDispatch } from "react-redux";
 import NavbarComponent from "../../component/NavbarComponent";
 import Card from 'react-bootstrap/Card';
 import Nav from 'react-bootstrap/Nav';
+import { Col, ListGroup, Row } from "react-bootstrap";
 
 const Pemesanan = () => {
   const navigate = useNavigate()
@@ -30,6 +31,9 @@ const Pemesanan = () => {
     navigate("/Logout")
   }
 
+  const {state} = useLocation()
+  const [payload, setPayload] = useState([])
+  const [invoice, setIvoice] = useState({})
   const [profile, setProfile] = useState({
     full_name: "",
     email: ""
@@ -37,6 +41,7 @@ const Pemesanan = () => {
 
   useEffect(() => {
     fetchProfile()
+    fetchOrder()
   }, [])
 
   const fetchProfile = (formData) => {
@@ -51,6 +56,30 @@ const Pemesanan = () => {
     .then(data => {
       setProfile(data)
         console.log(data)
+    })
+  }
+
+  const fetchOrder = () => {
+    const token = localStorage.getItem("token");
+    fetch(`http://localhost:8000/api/orders`, {
+      method: "GET", 
+      // body: JSON.stringify({
+      //   delivery_fee: 10000,
+      //   delivery_address: payload[0]
+      // }),
+
+      headers: {
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
+      },
+    })
+    .then((res) => res.json())
+    .then((data) => {
+      console.log("order:", data);
+      if (data._id) {
+        navigate("/Invoices", {state: {id: data._id}})
+      }
     })
   }
   
@@ -81,9 +110,28 @@ const Pemesanan = () => {
           <Card.Body>
             <Card.Title>Pemesanan</Card.Title>
             <hr style={{width: "10%"}} />
-            {/* <Card.Text>Anda Yakin Ingin Keluar ?</Card.Text>
-            <Button variant="primary">YA</Button>{" "}
-            <Button variant="primary">TIDAK</Button> */}
+            <ListGroup style={{width: "100%"}} variant="flush">
+            
+                <Row>
+                    <Col>
+                        <ListGroup.Item><strong>Order ID</strong></ListGroup.Item>
+                        <ListGroup.Item></ListGroup.Item>
+                    </Col>
+                    <Col>
+                        <ListGroup.Item><strong>Total</strong></ListGroup.Item>
+                        <ListGroup.Item></ListGroup.Item>
+                    </Col>
+                    <Col>
+                        <ListGroup.Item><strong>Status</strong></ListGroup.Item>
+                        <ListGroup.Item>{invoice?.order?.status}</ListGroup.Item>
+                    </Col>
+                    <Col>
+                        <ListGroup.Item><strong>Invoices</strong></ListGroup.Item>
+                        <ListGroup.Item><Button size="sm" variant="danger">Invoices</Button></ListGroup.Item>
+                    </Col>
+                </Row>
+
+            </ListGroup>
           </Card.Body>
         </Card>
         

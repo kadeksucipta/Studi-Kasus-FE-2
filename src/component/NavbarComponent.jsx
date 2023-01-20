@@ -39,7 +39,7 @@ const Home = () => {
     const [tags, setTags] = useState([])
     const [loading,setLoading] = useState(false)
     const [select, setSelect] = useState([])
-    const {cart} = useSelector(state => state.cart)
+    const cart = useSelector(state => state.cart)
 
     useEffect(() => {
         fetchProducts()
@@ -85,7 +85,6 @@ const Home = () => {
           .then(data => {
               console.log({data});
               dispatch(setCart(data));
-              setCart(data)
               console.log(data)
         })
       };
@@ -187,7 +186,7 @@ const Home = () => {
                 <Form.Control
                     onChange={e => searchHandler(e.target.value)}
                     type="search"
-                    placeholder="Search"
+                    placeholder="cari menu..."
                     className="me-2"
                     aria-label="Search"
                 />

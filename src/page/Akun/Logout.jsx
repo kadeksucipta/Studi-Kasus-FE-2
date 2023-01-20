@@ -14,6 +14,7 @@ import { useDispatch } from "react-redux";
 import NavbarComponent from "../../component/NavbarComponent";
 import Card from 'react-bootstrap/Card';
 import Nav from 'react-bootstrap/Nav';
+import { Modal } from "react-bootstrap";
 
 const Logout = () => {
   const navigate = useNavigate()
@@ -28,6 +29,9 @@ const Logout = () => {
   }
   const goToLogout = () => {
     navigate("/Logout")
+  }
+  const goToLogin = () => {
+    navigate("/")
   }
 
   const [profile, setProfile] = useState({
@@ -61,7 +65,7 @@ const Logout = () => {
 
         {/*---------------------------------------------------------*/}
 
-        <Card className="mt-5">
+        {/* <Card className="mt-5">
           <Card.Header>
             <Nav variant="tabs" defaultActiveKey="#first">
               <Nav.Item>
@@ -82,10 +86,30 @@ const Logout = () => {
             <Card.Title>Log Out</Card.Title>
             <hr style={{width: "10%"}} />
             <Card.Text>Anda Yakin Ingin Keluar ?</Card.Text>
-            <Button variant="primary">YA</Button>{" "}
-            <Button variant="primary">TIDAK</Button>
+            <Button variant="primary">TIDAK</Button>{" "}
+            <Button onClick={() => goToLogin()} variant="primary">YA</Button>
           </Card.Body>
-        </Card>
+        </Card> */}
+
+      <div
+      className="modal show"
+      style={{ display: 'block', position: 'initial' }}
+      >
+      <Modal.Dialog>
+        <Modal.Header onClick={() => goToProfile()} closeButton>
+          <Modal.Title>Logout</Modal.Title>
+        </Modal.Header>
+
+        <Modal.Body>
+          <p>Anda yakin ingin Logout.</p>
+        </Modal.Body>
+
+        <Modal.Footer>
+          <Button onClick={() => goToProfile()} style={{background: "#22668a"}}>Tidak</Button>
+          <Button onClick={() => goToLogin()} variant="danger">Ya</Button>
+        </Modal.Footer>
+      </Modal.Dialog>
+      </div>
         
     </React.Fragment>
   );

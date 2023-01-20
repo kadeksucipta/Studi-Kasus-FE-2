@@ -6,6 +6,9 @@ import { setUserData } from "../../src/App/features/Login/Actions";
 import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import logomart from "./logo.png"
+import "./Login.css"
+import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
+import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 
 const Login = () => {
   const [user, setUser] = useState({
@@ -74,6 +77,7 @@ const Login = () => {
   };
 
   return (
+    <div className="bg">
     <div className="container">
       <div className="box-login">
         <div className="container-login">
@@ -140,25 +144,26 @@ const Login = () => {
               <Form.Check type="checkbox" label="Check me out" />
             </Form.Group>
             <Button
-              style={{ width: "100%" }}
+              style={{ width: "100%", background: "#22668a"}}
               onClick={() => handleSubmit()}
               variant="primary"
               type="submit"
             >
               Log In
             </Button>
-            <hr />
-          <Button
-            style={{ width: "100%" }}
-            onClick={() => goToRegister()}
-            variant="success"
-            type="submit"
-          >
-            Register
-          </Button>
+            <hr/>
+            <Button
+              style={{ width: "100%", background: "#379237"}}
+              onClick={() => goToRegister()}
+              variant="success"
+              type="submit"
+            >
+              Sign Up
+            </Button>
             </Form>
         </div>
       </div>
+    </div>
     </div>
   );
 };

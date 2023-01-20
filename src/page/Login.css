@@ -1,0 +1,17 @@
+/* login background animation */
+@keyframes color {
+    0%   { background: #22668a; }
+    20%  { background: #48d44b; }
+    40%  { background: #c2a200; }
+    60%  { background: #008f86; }
+    80%  { background: #3a733b; }
+    100% { background: #22668a; }
+  }
+  
+  .bg {
+    width: 100%;
+    height: 100%;
+    background: #33CCCC;
+    animation: color 9s infinite linear;
+    padding: 2em;
+  }

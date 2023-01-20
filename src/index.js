@@ -15,6 +15,7 @@ import Confirmasi from "./page/Confirmasi"
 import Logout from "./page/Akun/Logout"
 import Invoices from "./page/Invoices"
 import TambahAlamat from "./page/Akun/TambahAlamat"
+import Login from './page/Login';
 import { createBrowserRouter, RouterProvider } from 'react-router-dom';
 import store from "./App/store"
 import { Provider } from 'react-redux';
@@ -67,6 +68,10 @@ const router = createBrowserRouter([
   {
     path: "/Logout",
     element: <Logout />
+  },
+  {
+    path: "/Login",
+    element: <Login />
   },
 ])
 
