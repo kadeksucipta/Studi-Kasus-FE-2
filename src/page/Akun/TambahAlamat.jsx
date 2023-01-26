@@ -31,8 +31,8 @@ const TambahAlamat = () => {
     navigate("/Logout");
   };
 
-  const [select, setSelect] = useState([]);
-  const [error, setError] = useState(false)
+  // const [select, setSelect] = useState([]);
+  // const [error, setError] = useState(false)
   const [provinsi, setProvinsi] = useState([]);
   const [kabupaten, setKabupaten] = useState([]);
   const [kecamatan, setKecamatan] = useState([]);
@@ -46,7 +46,7 @@ const TambahAlamat = () => {
     nama: ""
   })
   //-------------------------------------------
-  const [nama, setNama] = useState("");
+  // const [nama, setNama] = useState("");
   const [profile, setProfile] = useState({
     full_name: "",
     email: "",

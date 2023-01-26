@@ -1,16 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCartShopping } from "@fortawesome/free-solid-svg-icons"; 
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
-import { faUserCircle } from "@fortawesome/free-regular-svg-icons";
-import { faList } from "@fortawesome/free-solid-svg-icons";
-import { faLocationArrow } from "@fortawesome/free-solid-svg-icons";
-import { faSignOut } from "@fortawesome/free-solid-svg-icons";
-import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
-import { Navigate, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useNavigate } from "react-router-dom";
 import NavbarComponent from "../../component/NavbarComponent";
 import Card from 'react-bootstrap/Card';
 import Nav from 'react-bootstrap/Nav';
@@ -90,7 +80,7 @@ const Profile = () => {
             <Card.Text>Name: {profile.full_name}</Card.Text>
             <Card.Text>Email: {profile.email}</Card.Text>
 
-            <Button variant="primary" onClick={handleShow}>
+            <Button style={{background: "#22668a"}} onClick={handleShow}>
             Detail Profile
           </Button>
           <Modal show={show} onHide={handleClose}>
@@ -102,7 +92,7 @@ const Profile = () => {
               <Modal.Body><strong>Kadek Sucipta</strong><p>kadek@gmail.com</p><hr />User</Modal.Body>
             </div>
             <Modal.Footer>
-              <Button variant="primary" onClick={handleClose}>
+              <Button style={{background: "#22668a"}} onClick={handleClose}>
                 OK
               </Button>
             </Modal.Footer>

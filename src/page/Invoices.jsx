@@ -40,10 +40,12 @@ const Profile = () => {
     full_name: "",
     email: "",
   });
+  console.log("invoiceee", invoice);
 
   useEffect(() => {
     fetchProfile();
     getInvoices();
+    fetchCart()
   }, []);
 
   const fetchProfile = (formData) => {
@@ -62,9 +64,13 @@ const Profile = () => {
   };
 
   const fetchCart = () => {
+    const token = localStorage.getItem("token");
     fetch(`http://localhost:8000/api/carts`, {
+      method: "GET",
       headers: {
-        Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzkyZmYyZGQ3NWY1ZDc1NmU3MjFiZmYiLCJmdWxsX25hbWUiOiJLYWRlayBTdWNpcHRhIiwiZW1haWwiOiJrYWRla0BnbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJjdXN0b21lcl9pZCI6OSwiaWF0IjoxNjcwNTc3OTkwfQ.xkwYFydTTYD7T3aFQV5CqZfmrEc5SSKf7DWImi9nEEE`,
+        Authorization: `Bearer ${token}`,
+        Accept: "application/json",
+        "Content-Type": "application/json",
       },
     })
       .then((res) => res.json())
@@ -88,14 +94,8 @@ const Profile = () => {
     .then((data) => {
       setIvoice(data)
       console.log("get invoice: ", data);
-      // if (data._id) {
-      //   navigate("/Invoices", {state: {id: data._id}})
-      // }
     })
   }
-
-  let { count } = useSelector((state) => state.counter);
-  const dispatch = useDispatch();
 
   return (
     <React.Fragment>
@@ -127,6 +127,9 @@ const Profile = () => {
           <ListGroup style={{ width: "100%" }} variant="flush">
             <Row>
               <Col>
+              <ListGroup.Item>
+                  <strong>Time Order</strong>
+                </ListGroup.Item>
                 <ListGroup.Item>
                   <strong>Status</strong>
                 </ListGroup.Item>
@@ -144,9 +147,10 @@ const Profile = () => {
                 </ListGroup.Item>
               </Col>
               <Col>
+              <ListGroup.Item>{invoice.createdAt}</ListGroup.Item>
                 <ListGroup.Item>{invoice?.order?.status}</ListGroup.Item>
-                <ListGroup.Item>#{invoice?.user.customer_id}</ListGroup.Item>
-                <ListGroup.Item>Rp.{(invoice?.total)}.00</ListGroup.Item>
+                <ListGroup.Item>#{invoice?.user?.customer_id}</ListGroup.Item>
+                <ListGroup.Item>Rp.{numberWithCommas(invoice.total)}.00</ListGroup.Item>
                 <ListGroup.Item>
                   <strong>{invoice?.user?.full_name}</strong>
                   <br />

@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import { Col, Row } from "react-bootstrap";
 import Button from "react-bootstrap/Button";
 import Form from "react-bootstrap/Form";
 import { setUserData } from "../../src/App/features/Login/Actions";
@@ -7,8 +6,6 @@ import { useDispatch } from "react-redux";
 import { useNavigate } from "react-router-dom";
 import logomart from "./logo.png"
 import "./Login.css"
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faGoogle } from "@fortawesome/free-brands-svg-icons";
 
 const Login = () => {
   const [user, setUser] = useState({
@@ -153,7 +150,7 @@ const Login = () => {
             </Button>
             <hr/>
             <Button
-              style={{ width: "100%", background: "#379237"}}
+              style={{ width: "100%", background: "#379237" }}
               onClick={() => goToRegister()}
               variant="success"
               type="submit"

@@ -19,6 +19,7 @@ import Navbar from 'react-bootstrap/Navbar';
 import NavDropdown from 'react-bootstrap/NavDropdown';
 import { useNavigate } from "react-router-dom";
 import { setCart } from "../App/features/Cart/Actions";
+import logo from "../page/SLEBEW MART.png"
 
 const Home = () => {
     const navigate = useNavigate()
@@ -128,7 +129,7 @@ const Home = () => {
         <React.Fragment>
             <Navbar variant="dark" expand="lg">
             <Container>
-            <Navbar.Brand style={{cursor: "pointer"}} onClick={() => goToHome()}><strong>Slebew</strong>Mart</Navbar.Brand>
+            <Navbar.Brand style={{cursor: "pointer"}} onClick={() => goToHome()}><img src={logo}  width="110" height="30"/></Navbar.Brand>
             <Navbar.Toggle aria-controls="navbarScroll" />
             <Navbar.Collapse id="navbarScroll">
                 <Nav

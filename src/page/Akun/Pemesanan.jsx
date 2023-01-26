@@ -1,20 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCartShopping } from "@fortawesome/free-solid-svg-icons"; 
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
-import { faUserCircle } from "@fortawesome/free-regular-svg-icons";
-import { faList } from "@fortawesome/free-solid-svg-icons";
-import { faLocationArrow } from "@fortawesome/free-solid-svg-icons";
-import { faSignOut } from "@fortawesome/free-solid-svg-icons";
-import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
-import { Navigate, useLocation, useNavigate } from "react-router-dom";
-import { useDispatch } from "react-redux";
+import { useLocation, useNavigate } from "react-router-dom";
 import NavbarComponent from "../../component/NavbarComponent";
 import Card from 'react-bootstrap/Card';
 import Nav from 'react-bootstrap/Nav';
 import { Col, ListGroup, Row } from "react-bootstrap";
+import { numberWithCommas } from "../../component/Utils";
 
 const Pemesanan = () => {
   const navigate = useNavigate()
@@ -30,9 +21,12 @@ const Pemesanan = () => {
   const goToLogout = () => {
     navigate("/Logout")
   }
+  const goToInvoices = (id) => {
+    navigate("/Invoices", {state:{id}})
+  }
 
   const {state} = useLocation()
-  const [payload, setPayload] = useState([])
+  const [order, setOrder] = useState([])
   const [invoice, setIvoice] = useState({})
   const [profile, setProfile] = useState({
     full_name: "",
@@ -40,34 +34,29 @@ const Pemesanan = () => {
   })
 
   useEffect(() => {
-    fetchProfile()
+    // fetchProfile()
     fetchOrder()
   }, [])
 
-  const fetchProfile = (formData) => {
-    fetch(`http://localhost:8000/auth/me`,
-        {
-        method: "GET",
-        body: formData,
-        headers: {"Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzkyZmYyZGQ3NWY1ZDc1NmU3MjFiZmYiLCJmdWxsX25hbWUiOiJLYWRlayBTdWNpcHRhIiwiZW1haWwiOiJrYWRla0BnbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJjdXN0b21lcl9pZCI6OSwiaWF0IjoxNjcwOTk0NzkyfQ.SR3QSv5msez833UDgbOdnWwIQWhtonKyBDC38Iun0Jo`}
-        }
-    )
-    .then(res => res.json())
-    .then(data => {
-      setProfile(data)
-        console.log(data)
-    })
-  }
+  // const fetchProfile = (formData) => {
+  //   fetch(`http://localhost:8000/auth/me`,
+  //       {
+  //       method: "GET",
+  //       body: formData,
+  //       headers: {"Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzkyZmYyZGQ3NWY1ZDc1NmU3MjFiZmYiLCJmdWxsX25hbWUiOiJLYWRlayBTdWNpcHRhIiwiZW1haWwiOiJrYWRla0BnbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJjdXN0b21lcl9pZCI6OSwiaWF0IjoxNjcwOTk0NzkyfQ.SR3QSv5msez833UDgbOdnWwIQWhtonKyBDC38Iun0Jo`}
+  //       }
+  //   )
+  //   .then(res => res.json())
+  //   .then(data => {
+  //     setProfile(data)
+  //       console.log(data)
+  //   })
+  // }
 
   const fetchOrder = () => {
     const token = localStorage.getItem("token");
     fetch(`http://localhost:8000/api/orders`, {
-      method: "GET", 
-      // body: JSON.stringify({
-      //   delivery_fee: 10000,
-      //   delivery_address: payload[0]
-      // }),
-
+      method: "GET",
       headers: {
         Authorization: `Bearer ${token}`,
         Accept: "application/json",
@@ -76,10 +65,8 @@ const Pemesanan = () => {
     })
     .then((res) => res.json())
     .then((data) => {
+      setOrder(data.data)
       console.log("order:", data);
-      if (data._id) {
-        navigate("/Invoices", {state: {id: data._id}})
-      }
     })
   }
   
@@ -111,26 +98,26 @@ const Pemesanan = () => {
             <Card.Title>Pemesanan</Card.Title>
             <hr style={{width: "10%"}} />
             <ListGroup style={{width: "100%"}} variant="flush">
-            
-                <Row>
+            {order.map((item, index) => (
+                <Row key={index}>
                     <Col>
-                        <ListGroup.Item><strong>Order ID</strong></ListGroup.Item>
-                        <ListGroup.Item></ListGroup.Item>
+                        <ListGroup.Item style={{background: "#eeeeee"}}><strong>Order ID</strong></ListGroup.Item>
+                        <ListGroup.Item>{item._id}</ListGroup.Item>
                     </Col>
                     <Col>
-                        <ListGroup.Item><strong>Total</strong></ListGroup.Item>
-                        <ListGroup.Item></ListGroup.Item>
+                        <ListGroup.Item style={{background: "#eeeeee"}}><strong>Total</strong></ListGroup.Item>
+                        <ListGroup.Item>Rp.{numberWithCommas(item.total)}.00</ListGroup.Item>
                     </Col>
                     <Col>
-                        <ListGroup.Item><strong>Status</strong></ListGroup.Item>
-                        <ListGroup.Item>{invoice?.order?.status}</ListGroup.Item>
+                        <ListGroup.Item style={{background: "#eeeeee"}}><strong>Status</strong></ListGroup.Item>
+                        <ListGroup.Item>{item.status}</ListGroup.Item>
                     </Col>
                     <Col>
-                        <ListGroup.Item><strong>Invoices</strong></ListGroup.Item>
-                        <ListGroup.Item><Button size="sm" variant="danger">Invoices</Button></ListGroup.Item>
+                        <ListGroup.Item style={{background: "#eeeeee"}}><strong>Invoices</strong></ListGroup.Item>
+                        <ListGroup.Item><Button size="sm" variant="danger" onClick={() => goToInvoices(item._id)}>Invoices</Button></ListGroup.Item>
                     </Col>
                 </Row>
-
+              ))}
             </ListGroup>
           </Card.Body>
         </Card>

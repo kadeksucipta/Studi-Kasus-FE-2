@@ -40,6 +40,14 @@ body {
   border: none;
 }
 
+.tag-item:hover {
+  background-color: #145171;
+}
+
+.tags-item:hover {
+  background-color: #145171;
+}
+
 .card-container {
   /* position: relative; */
   display: flex;

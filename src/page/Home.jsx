@@ -1,5 +1,4 @@
 import React, { useEffect, useState } from "react";
-import Pagination from "react-bootstrap/Pagination";
 import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
 import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
 import { faCartPlus } from "@fortawesome/free-solid-svg-icons";
@@ -8,9 +7,7 @@ import { faSearch } from "@fortawesome/free-solid-svg-icons";
 import { faUser } from "@fortawesome/free-solid-svg-icons";
 import Button from "react-bootstrap/Button";
 import Card from "react-bootstrap/Card";
-import Dropdown from "react-bootstrap/Dropdown";
 import { useDispatch, useSelector } from "react-redux";
-import NavbarComponent from "../component/NavbarComponent";
 import {
   Badge,
   Col,
@@ -21,9 +18,10 @@ import {
   NavDropdown,
 } from "react-bootstrap";
 import { useNavigate } from "react-router-dom";
-import { setCart, addToCart } from "../App/features/Cart/Actions";
+import { setCart } from "../App/features/Cart/Actions";
 import { numberWithCommas } from "../component/Utils";
 import swal from "sweetalert";
+import logo from "./SLEBEW MART.png"
 
 const Home = () => {
   const navigate = useNavigate();
@@ -40,7 +38,6 @@ const Home = () => {
   const [tags, setTags] = useState([]);
   const [select, setSelect] = useState([]);
   const [loading, setLoading] = useState(false);
-  // const [cart, setCart] = useState([])
   const { user } = useSelector((state) => state.login);
   const cart = useSelector((state) => state.cart);
 
@@ -50,23 +47,6 @@ const Home = () => {
     fetchTags();
     fetchCart();
   }, []);
-
-  // useEffect(() => {
-    
-  //   fetch(`http://localhost:8000/api/carts`, {
-  //     method: "PUT",
-  //     body: JSON.stringify({
-  //       user: JSON.parse(userData),
-  //       items: cart,
-  //     }),
-
-  //     headers: {
-  //       Authorization: `Bearer ${token}`,
-  //       Accept: "application/json",
-  //       "Content-Type": "application/json",
-  //     },
-  //   }).then(() => fetchCart());
-  // }, []);
 
   const fetchProducts = () => {
     fetch(`http://localhost:8000/api/products?q=${keyword}&skip=0&limit=50`)
@@ -95,19 +75,37 @@ const Home = () => {
         console.log(data);
       });
   };
+  
+  const handleTags = (tags) => {
+    fetch(`http://localhost:8000/api/products?limit=50&tags=${tags}`)
+    .then((res) => res.json())
+    .then((data) => {
+      setProducts(data.data);
+      console.log(data);
+    });
+  }
 
   const addtoCart = (item) => {
     const token = localStorage.getItem("token");
       const userData = localStorage.getItem("userData");
-      const oldCart = cart.map(item => ({...item.product, qty: item.qty}))
+      let oldCart = cart.map(item => ({...item.product, qty: item.qty}))
+      let existingItemIndex = oldCart.findIndex(cartItem => cartItem._id === item._id)
+      let items 
+      if (existingItemIndex >= 0) {
+        oldCart[existingItemIndex] = {...oldCart[existingItemIndex], qty: oldCart[existingItemIndex].qty+1}
+        items = oldCart
+      } else {
+        items = [...oldCart, {...item, qty: 1}]
+      }
       console.log("oldcart :", oldCart);
       console.log("cart: ",cart);
+      console.log("itemsss :", items);
 
       fetch(`http://localhost:8000/api/carts`, {
         method: "PUT",
         body: JSON.stringify({
           user: JSON.parse(userData),
-          items: [...oldCart, {...item, qty: 1}]
+          items
         }),
 
         headers: {
@@ -128,11 +126,9 @@ const Home = () => {
             timer: 1000,
           });
         }
-        // dispatch(addToCart({ ...item, qty: 1 }));
       })
 
     console.log(cart);
-    // const cart = cart && cart.map(value => value.product)
   };
 
   const fetchCart = () => {
@@ -164,7 +160,7 @@ const Home = () => {
       <Navbar variant="dark" expand="lg">
         <Container>
           <Navbar.Brand href="#">
-            <strong>Slebew</strong>Mart
+            <img src={logo}  width="110" height="30"/>
           </Navbar.Brand>
           <Navbar.Toggle aria-controls="navbarScroll" />
           <Navbar.Collapse id="navbarScroll">
@@ -250,11 +246,11 @@ const Home = () => {
         </Container>
       </Navbar>
 
-      <h5 className="tags"><strong>Tags :</strong></h5>
+      <h5 className="tags"><FontAwesomeIcon icon={faTag} /><strong>Tags :</strong><hr style={{width: "47%", border: "1px solid black"}}/></h5>
 
       <div className="tag-atas">
         {tags.map((item, index) => (
-          <button key={index} value={tags} className="button-tags">
+          <button key={index} value={tags} className="button-tags" onClick={() => handleTags(item.name)}>
             <FontAwesomeIcon icon={faTag} />
             {item.name}
           </button>
@@ -264,11 +260,10 @@ const Home = () => {
       {/*---------------------------------------------------------------*/}
 
       <div className="card-container">
-        {/* {loading ? <Loader /> : ""} */}
 
         <br />
         {products.length === 0 && (
-          <h6 className="none-menu">Maaf menu tidak ditemukan</h6>
+          <span style={{marginLeft: "40%", marginTop: "30px", marginBottom: "30px"}}>Maaf menu tidak ditemukan</span>
         )}
         {products.map((item, index) => (
           <Col md={3} xs={6} className="mb-1 mt-4">
@@ -311,28 +306,6 @@ const Home = () => {
             </Card>
           </Col>
         ))}
-      </div>
-
-      {/*---------------------------------------------------------------*/}
-
-      <div className="pagination">
-        <Pagination className="page">
-          <Pagination.First className="page1" />
-          {/* <Pagination.Prev className="page2" /> */}
-          <Pagination.Item className="page3" active>
-            {1}
-          </Pagination.Item>
-
-          <Pagination.Item className="page4">{2}</Pagination.Item>
-          <Pagination.Item className="page5">{3}</Pagination.Item>
-          <Pagination.Item className="page6">{4}</Pagination.Item>
-          <Pagination.Item className="page7">{5}</Pagination.Item>
-          <Pagination.Item className="page8">{6}</Pagination.Item>
-
-          <Pagination.Item className="page10">{7}</Pagination.Item>
-          {/* <Pagination.Next className="page11"/> */}
-          <Pagination.Last className="page12" />
-        </Pagination>
       </div>
     </React.Fragment>
   );

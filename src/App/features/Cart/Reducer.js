@@ -36,7 +36,7 @@ const CartReducer = (state = initialState, { type, payload }) => {
     case SET_CART:
       const newPayload = payload.map(item => ({
         ...item,
-        qty: 1
+        qty: item.qty?item.qty:1
       }))
       console.log(newPayload)
       return newPayload;

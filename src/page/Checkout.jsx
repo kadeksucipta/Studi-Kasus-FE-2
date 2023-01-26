@@ -1,21 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCartShopping } from "@fortawesome/free-solid-svg-icons"; 
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
-import { faUserCircle } from "@fortawesome/free-regular-svg-icons";
-import { faList } from "@fortawesome/free-solid-svg-icons";
-import { faLocationArrow } from "@fortawesome/free-solid-svg-icons";
-import { faSignOut } from "@fortawesome/free-solid-svg-icons";
-import Dropdown from 'react-bootstrap/Dropdown';
 import Button from 'react-bootstrap/Button';
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import NavbarComponent from "../component/NavbarComponent";
 import Card from 'react-bootstrap/Card';
-import Nav from 'react-bootstrap/Nav';
 import { Col, ListGroup, Row } from "react-bootstrap";
-import {  decrementWitchCheckingAction, increment } from "../App/features/Counter/actions"
 
 const Profile = () => {
   const navigate = useNavigate()
@@ -26,9 +15,11 @@ const Profile = () => {
       navigate("/Pemesanan")
   }
   const goToConfirmasi = () => {
-      navigate("/Confirmasi")
+      navigate("/Confirmasi", 
+      {state: {address: selectAddress}})
   }
 
+  const [selectAddress, setSelectAddress] = useState()
   const [payload, setPayload] = useState([])
   const [cart, setCart] = useState([])
   const [profile, setProfile] = useState({
@@ -45,7 +36,6 @@ const Profile = () => {
     const token = localStorage.getItem("token");
     fetch(`http://localhost:8000/api/delivery-addresses`, {
       method: "GET",
-        // body: JSON.stringify(payload),
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
@@ -112,11 +102,12 @@ const Profile = () => {
         <Card.Header style={{width: "100%", background: "#DC0000", color: "white"}}><strong>Check Out</strong></Card.Header>
         <ListGroup style={{width: "100%"}} variant="flush">
         <ListGroup.Item><strong>Pilih Alamat Pengiriman</strong></ListGroup.Item>
+        <ListGroup.Item>{payload.length}</ListGroup.Item>
         {payload.map((item, index) => (
             <Row key={index}>
                 <Col>
                     <ListGroup.Item><strong>Kota</strong></ListGroup.Item>
-                    <ListGroup.Item><input type="checkbox"/>{item.kabupaten}</ListGroup.Item>
+                    <ListGroup.Item><input type="checkbox" checked={item._id === selectAddress?._id} onClick={() => setSelectAddress(item)}/>{" "}{item.kabupaten}</ListGroup.Item>
                 </Col>
                 <Col>
                     <ListGroup.Item><strong>Detail</strong></ListGroup.Item>
@@ -130,7 +121,8 @@ const Profile = () => {
         style={{
             width: "99%",
             marginBottom: "5px",
-            marginTop: "5px"
+            marginTop: "5px",
+            background: "#22668a"
             }}
         >Selanjutnya
         </Button>

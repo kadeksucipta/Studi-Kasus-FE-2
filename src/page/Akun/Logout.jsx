@@ -64,33 +64,6 @@ const Logout = () => {
         <NavbarComponent />
 
         {/*---------------------------------------------------------*/}
-
-        {/* <Card className="mt-5">
-          <Card.Header>
-            <Nav variant="tabs" defaultActiveKey="#first">
-              <Nav.Item>
-                <Nav.Link onClick={() => goToProfile()}>Profile</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link onClick={() => goToAlamat()}>Alamat</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link onClick={() => goToPemesanan()}>Pemesanan</Nav.Link>
-              </Nav.Item>
-              <Nav.Item>
-                <Nav.Link onClick={() => goToLogout()} href="#first">Log Out</Nav.Link>
-              </Nav.Item>
-            </Nav>
-          </Card.Header>
-          <Card.Body>
-            <Card.Title>Log Out</Card.Title>
-            <hr style={{width: "10%"}} />
-            <Card.Text>Anda Yakin Ingin Keluar ?</Card.Text>
-            <Button variant="primary">TIDAK</Button>{" "}
-            <Button onClick={() => goToLogin()} variant="primary">YA</Button>
-          </Card.Body>
-        </Card> */}
-
       <div
       className="modal show"
       style={{ display: 'block', position: 'initial' }}

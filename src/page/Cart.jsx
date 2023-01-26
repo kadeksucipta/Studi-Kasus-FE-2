@@ -1,26 +1,14 @@
 import React, { useEffect, useState } from "react";
-import { FontAwesomeIcon } from "@fortawesome/react-fontawesome";
-import { faCartShopping } from "@fortawesome/free-solid-svg-icons";
-import { faSearch } from "@fortawesome/free-solid-svg-icons";
-import { faUser } from "@fortawesome/free-solid-svg-icons";
-import { faUserCircle } from "@fortawesome/free-regular-svg-icons";
-import { faList } from "@fortawesome/free-solid-svg-icons";
-import { faLocationArrow } from "@fortawesome/free-solid-svg-icons";
-import { faSignOut } from "@fortawesome/free-solid-svg-icons";
-import Dropdown from "react-bootstrap/Dropdown";
 import Button from "react-bootstrap/Button";
-import { Navigate, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import NavbarComponent from "../component/NavbarComponent";
 import Card from "react-bootstrap/Card";
-import Nav from "react-bootstrap/Nav";
 import { Col, ListGroup, Row } from "react-bootstrap";
-import {
-  decrementWitchCheckingAction,
-  increment,
-} from "../App/features/Counter/actions";
+import { increment } from "../App/features/Counter/actions";
 import { numberWithCommas } from "../component/Utils";
-import { removeFromCart, addToCart } from "../App/features/Cart/Actions";
+import { setCart } from "../App/features/Cart/Actions";
+
 
 const Profile = () => {
   const navigate = useNavigate();
@@ -37,74 +25,83 @@ const Profile = () => {
     navigate("/Checkout");
   };
 
+  const dispatch = useDispatch()
+  let { count } = useSelector((state) => state.counter);
   var totalCartPrice = 0;
-  const [totalPrice, setTotalaPrice] = useState([])
   const cart = useSelector((state) => state.cart);
-  const [profile, setProfile] = useState({
-    full_name: "",
-    email: "",
-  });
-
-  useEffect(() => {
-    // fetchProfile()
-    // fetchCart()
-  }, []);
-
-  // const fetchProfile = (formData) => {
-  //   fetch(`http://localhost:8000/auth/me`,
-  //       {
-  //       method: "GET",
-  //       body: formData,
-  //       headers: {"Authorization" : `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJfaWQiOiI2MzkyZmYyZGQ3NWY1ZDc1NmU3MjFiZmYiLCJmdWxsX25hbWUiOiJLYWRlayBTdWNpcHRhIiwiZW1haWwiOiJrYWRla0BnbWFpbC5jb20iLCJyb2xlIjoiYWRtaW4iLCJjdXN0b21lcl9pZCI6OSwiaWF0IjoxNjcwOTk0NzkyfQ.SR3QSv5msez833UDgbOdnWwIQWhtonKyBDC38Iun0Jo`}
-  //       }
-  //   )
-  //   .then(res => res.json())
-  //   .then(data => {
-  //     setProfile(data)
-  //       console.log(data)
-  //   })
-  // }
 
   const addtoCart = (item) => {
     const token = localStorage.getItem("token");
-    const userData = localStorage.getItem("userData");
-    fetch(`http://localhost:8000/api/carts`, {
-      method: "PUT",
-      body: JSON.stringify({
-        user: JSON.parse(userData),
-        items: [...cart, {...item, qty: 1}]
-      }),
+      const userData = localStorage.getItem("userData");
+      let oldCart = cart.map(item => ({...item.product, qty: item.qty}))
+      let existingItemIndex = oldCart.findIndex(cartItem => cartItem._id === item._id)
+      let items 
+      if (existingItemIndex >= 0) {
+        oldCart[existingItemIndex] = {...oldCart[existingItemIndex], qty: oldCart[existingItemIndex].qty+1}
+        items = oldCart
+      } else {
+        items = [...oldCart, {...item, qty: 1}]
+      }
+      console.log("oldcart :", oldCart);
+      console.log("cart: ",cart);
+      console.log("itemscart :", items);
 
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    }).then(() => {
-      dispatch(addToCart({ ...item, qty: 1 }));
-    });
+      fetch(`http://localhost:8000/api/carts`, {
+        method: "PUT",
+        body: JSON.stringify({
+          user: JSON.parse(userData),
+          items
+        }),
 
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        console.log({response});
+        if (response.status === 200) {
+          fetchCart() 
+        }
+      })
     console.log(cart);
   };
 
   const removeProduct = (item) => {
     const token = localStorage.getItem("token");
-    const userData = localStorage.getItem("userData");
-    fetch(`http://localhost:8000/api/carts`, {
-      method: "DELETE",
-      body: JSON.stringify({
-        user: JSON.parse(userData),
-        items: cart,
-      }),
+      const userData = localStorage.getItem("userData");
+      let oldCart = cart.map(item => ({...item.product, qty: item.qty}))
+      let existingItemIndex = oldCart.findIndex(cartItem => cartItem._id === item._id)
+      let items 
+      if (existingItemIndex >= 0) {
+        oldCart[existingItemIndex] = {...oldCart[existingItemIndex], qty: oldCart[existingItemIndex].qty-1}
+        items = oldCart
+      } else {
+        items = [...oldCart, {...item, qty: 1}]
+      }
+      console.log("oldcart :", oldCart);
+      console.log("cart: ",cart);
 
-      headers: {
-        Authorization: `Bearer ${token}`,
-        Accept: "application/json",
-        "Content-Type": "application/json",
-      },
-    }).then(() => {
-      dispatch(removeFromCart({ ...item, qty: 1 }));
-    });
+      fetch(`http://localhost:8000/api/carts`, {
+        method: "PUT",
+        body: JSON.stringify({
+          user: JSON.parse(userData),
+          items
+        }),
+
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+          "Content-Type": "application/json",
+        },
+      })
+      .then((response) => {
+        console.log({response});
+        if (response.status === 200) {
+          fetchCart() 
+        }
+      })
 
     console.log(cart);
   };
@@ -119,13 +116,10 @@ const Profile = () => {
     })
       .then((res) => res.json())
       .then((data) => {
-        // setCart(data)
+        dispatch(setCart(data));
         console.log(data);
       });
   };
-
-  let { count } = useSelector((state) => state.counter);
-  const dispatch = useDispatch();
 
   {cart.map((item, index) => (
     totalCartPrice += item.price * item.qty
@@ -204,7 +198,7 @@ const Profile = () => {
                   </ListGroup.Item>
                   <Button
                     variant="danger"
-                    onClick={() => removeProduct(item)}
+                    onClick={() => removeProduct(item.product)}
                     className="plus"
                   >
                     <strong>-</strong>
@@ -212,7 +206,7 @@ const Profile = () => {
                   &nbsp; <span>{item.qty}</span> &nbsp;{" "}
                   <Button
                     variant="primary"
-                    onClick={() => addtoCart(item)}
+                    onClick={() => addtoCart(item.product)}
                     className="plus"
                   >
                     <strong>+</strong>
@@ -221,7 +215,7 @@ const Profile = () => {
               </Row>
             ))}
           </ListGroup>
-          <Button style={{width: "99%", margin: "5px 5px 5px 5px"}} onClick={() => goToCheckout()}>Check Out</Button>
+          <Button style={{width: "99%", margin: "5px 5px 5px 5px", background: "#22668a"}} onClick={() => goToCheckout()}>Check Out</Button>
         </Card>
       </div>
     </React.Fragment>

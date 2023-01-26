@@ -38,14 +38,6 @@ const Alamat = () => {
     full_name: "",
     email: ""
   })
-  // const [payload, setPayload] = useState({
-  //   provinsi: "",
-  //   kabupaten: "",
-  //   kecamatan: "",
-  //   kelurahan: "",
-  //   detail: "",
-  //   nama: ""
-  // })
   const [payload, setPayload] = useState([])
 
   useEffect(() => {
@@ -56,7 +48,6 @@ const Alamat = () => {
     const token = localStorage.getItem("token");
     fetch(`http://localhost:8000/api/delivery-addresses`, {
       method: "GET",
-        // body: JSON.stringify(payload),
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
@@ -101,34 +92,34 @@ const Alamat = () => {
               {payload.map((item, index) => (
                 <Row key={index}>
                     <Col>
-                        <ListGroup.Item><strong>Nama</strong></ListGroup.Item>
+                        <ListGroup.Item style={{background: "#eeeeee"}}><strong>Nama</strong></ListGroup.Item>
                         <ListGroup.Item>{item.nama}</ListGroup.Item>
                     </Col>
                     <Col>
-                        <ListGroup.Item><strong>Provinsi</strong></ListGroup.Item>
+                        <ListGroup.Item style={{background: "#eeeeee"}}><strong>Provinsi</strong></ListGroup.Item>
                         <ListGroup.Item>{item.provinsi}</ListGroup.Item>
                     </Col>
                     <Col>
-                        <ListGroup.Item><strong>Kabupaten</strong></ListGroup.Item>
+                        <ListGroup.Item style={{background: "#eeeeee"}}><strong>Kabupaten</strong></ListGroup.Item>
                         <ListGroup.Item>{item.kabupaten}</ListGroup.Item>
                     </Col>
                     <Col>
-                        <ListGroup.Item><strong>Kecamatan</strong></ListGroup.Item>
+                        <ListGroup.Item style={{background: "#eeeeee"}}><strong>Kecamatan</strong></ListGroup.Item>
                         <ListGroup.Item>{item.kecamatan}</ListGroup.Item>
                     </Col>
                     <Col>
-                        <ListGroup.Item><strong>Kelurahan</strong></ListGroup.Item>
+                        <ListGroup.Item style={{background: "#eeeeee"}}><strong>Kelurahan</strong></ListGroup.Item>
                         <ListGroup.Item>{item.kelurahan}</ListGroup.Item>
                     </Col>
                     <Col>
-                        <ListGroup.Item><strong>Detail</strong></ListGroup.Item>
+                        <ListGroup.Item style={{background: "#eeeeee"}}><strong>Detail</strong></ListGroup.Item>
                         <ListGroup.Item>{item.detail}</ListGroup.Item>
                     </Col>
                 </Row>
                 ))}
             </ListGroup>
             <br />
-            <Button onClick={() => goToTambahAlamat()} variant="primary">Tambah Alamat</Button>
+            <Button onClick={() => goToTambahAlamat()} style={{background: "#22668a"}}>Tambah Alamat</Button>
           </Card.Body>
         </Card>
         
